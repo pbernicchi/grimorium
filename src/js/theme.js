@@ -15,11 +15,13 @@
 import { grimorium } from "./themes/grimorium.js";
 import { cassette } from "./themes/cassette.js";
 import { orrery } from "./themes/orrery.js";
+import { lcars } from "./themes/lcars.js";
 
 export const THEMES = Object.freeze({
   grimorium,
   cassette,
-  orrery
+  orrery,
+  lcars
 });
 
 export let activeTheme = orrery;

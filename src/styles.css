@@ -728,6 +728,7 @@
   .bg-sigil-stroke { fill: none; stroke: var(--gold); stroke-width: 1; }
   .bg-sigil-text { fill: var(--gold); font-family: var(--glyph); text-anchor: middle; dominant-baseline: central; opacity: 0.85; }
   .bg-grid { fill: none; stroke: var(--ink-faint); stroke-width: 0.5; opacity: 0.18; }
+  .bg-readout { fill: var(--gold); font-family: var(--mono); letter-spacing: 0.1em; text-anchor: start; dominant-baseline: central; pointer-events: none; }
 
   /* ---------- circular card variant (radial layouts) ---------- */
   .card.circular {
@@ -1199,3 +1200,226 @@
       animation: none !important;
     }
   }
+
+  /* ---------- LCARS theme overrides ---------- */
+  /* Authentic LCARS: flat black canvas, solid color blocks, condensed bold
+     caps, black "channel" gaps, asymmetric big-radius corners. No glow —
+     LCARS is matte color, never neon. Neon-carrot orange is the chrome;
+     state rides each card's header bar AND border. */
+  body[data-theme="lcars"] {
+    background: #000;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-stretch: 85%;
+    letter-spacing: 0.04em;
+  }
+  body[data-theme="lcars"]::before { display: none; }
+
+  /* Top bar: black with a thick LCARS underline that sweeps at the corner. */
+  body[data-theme="lcars"] .topbar {
+    background: #000;
+    border-bottom: 4px solid var(--gold);
+    border-bottom-right-radius: 22px;
+  }
+  body[data-theme="lcars"] .topbar .brand {
+    color: var(--gold);
+    text-shadow: none;
+    font-family: var(--serif);
+    font-stretch: 85%;
+    font-weight: 700;
+    letter-spacing: 0.34em;
+  }
+  body[data-theme="lcars"] .topbar .brand .sub {
+    color: var(--ink-dim);
+    font-style: normal;
+    font-stretch: 85%;
+  }
+  body[data-theme="lcars"] .topbar .meta .k { color: var(--ink-dim); }
+  body[data-theme="lcars"] .topbar .meta .v { color: var(--gold-bright); }
+
+  /* Buttons: solid LCARS pill blocks, black text, condensed caps. No glow;
+     hover just brightens the fill. */
+  body[data-theme="lcars"] .btn {
+    background: var(--gold);
+    color: #000;
+    border: none;
+    border-radius: 16px;
+    font-family: var(--serif);
+    font-stretch: 85%;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 6px 18px;
+    min-height: 28px;
+    text-transform: uppercase;
+    transition: background 0.14s, filter 0.14s;
+  }
+  body[data-theme="lcars"] .btn:hover {
+    background: var(--gold-bright);
+    color: #000;
+    border-color: transparent;
+    box-shadow: none;
+  }
+  body[data-theme="lcars"] .btn.primary { background: var(--verdant); color: #000; border-color: transparent; }
+  body[data-theme="lcars"] .btn.primary:hover { background: var(--verdant-bright); color: #000; box-shadow: none; }
+  body[data-theme="lcars"] .btn.danger { background: var(--sienna); color: #000; border-color: transparent; }
+  body[data-theme="lcars"] .btn.danger:hover { background: #ff5a3a; color: #000; box-shadow: none; }
+  body[data-theme="lcars"] .btn.ghost { background: var(--brown); color: #000; border-color: transparent; }
+  body[data-theme="lcars"] .btn.ghost:hover { background: var(--gold-bright); color: #000; box-shadow: none; }
+  body[data-theme="lcars"] .btn.active { background: var(--amber); color: #000; border-color: transparent; box-shadow: none; }
+  body[data-theme="lcars"] .btn:disabled { opacity: 0.4; }
+
+  /* Left rail: black with an orange edge; sigils stay round, flat. */
+  body[data-theme="lcars"] .shelf {
+    background: #000;
+    border-right: 4px solid var(--gold-dim);
+  }
+  body[data-theme="lcars"] .sigil {
+    background: #000;
+    border: 2px solid var(--gold);
+  }
+  body[data-theme="lcars"] .sigil:hover { box-shadow: none; transform: scale(1.08); }
+  body[data-theme="lcars"] .sigil.active { box-shadow: 0 0 0 2px currentColor inset; }
+  body[data-theme="lcars"] .sigil.drop-target { box-shadow: 0 0 0 2px var(--gold-bright) inset; border-color: var(--gold-bright); }
+  body[data-theme="lcars"] .sigil-ghost { box-shadow: none; }
+  body[data-theme="lcars"] .sigil.add { border-style: dashed; border-color: var(--ink-faint); }
+
+  /* Cards: rounded LCARS panels; the header bar carries the state color,
+     fronted by a black "cap" segment and split from the body by a channel. */
+  body[data-theme="lcars"] .card {
+    background: #000;
+    border: 2px solid var(--gold);
+    border-radius: 4px 18px 18px 4px;
+    box-shadow: none;
+  }
+  body[data-theme="lcars"] .card::before,
+  body[data-theme="lcars"] .card::after { display: none; }
+  body[data-theme="lcars"] .card:hover { box-shadow: none; filter: brightness(1.12); }
+  body[data-theme="lcars"] .card.dragging { box-shadow: none; filter: brightness(1.2); z-index: 30 !important; }
+  body[data-theme="lcars"] .card.drop-target { box-shadow: 0 0 0 2px var(--gold-bright); }
+
+  body[data-theme="lcars"] .card-header {
+    background: var(--gold);
+    border-bottom: 3px solid #000;     /* black channel under the bar */
+    border-radius: 2px 16px 0 0;
+    padding: 4px 12px 5px;
+    gap: 8px;
+  }
+  /* LCARS bar end-cap: a short black rounded segment at the bar's left. */
+  body[data-theme="lcars"] .card-header::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 20px;
+    height: 12px;
+    background: #000;
+    border-radius: 6px;
+    align-self: center;
+  }
+  body[data-theme="lcars"] .card-name {
+    color: #000;
+    font-weight: 700;
+    font-stretch: 85%;
+    text-align: right;
+    letter-spacing: 0.1em;
+  }
+  body[data-theme="lcars"] .card-pill {
+    background: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 1px 8px;
+    font-stretch: 85%;
+  }
+  body[data-theme="lcars"] .card.state-ok    .card-header { background: var(--verdant); }
+  body[data-theme="lcars"] .card.state-warn  .card-header { background: var(--amber); }
+  body[data-theme="lcars"] .card.state-bad   .card-header { background: var(--sienna); }
+  body[data-theme="lcars"] .card.state-check .card-header { background: var(--gold-bright); }
+  body[data-theme="lcars"] .card.state-unk   .card-header { background: var(--gold-dim); }
+  /* Card border tracks the header bar color per state. */
+  body[data-theme="lcars"] .card.state-ok    { border-color: var(--verdant); }
+  body[data-theme="lcars"] .card.state-warn  { border-color: var(--amber); }
+  body[data-theme="lcars"] .card.state-bad   { border-color: var(--sienna); }
+  body[data-theme="lcars"] .card.state-check { border-color: var(--gold-bright); animation: none; }
+  body[data-theme="lcars"] .card.state-unk   { border-color: var(--gold-dim); }
+  body[data-theme="lcars"] .card-addr { color: var(--ink); }
+  body[data-theme="lcars"] .card-detail { color: var(--sienna); border-top-color: var(--ink-faint); }
+  body[data-theme="lcars"] .card-detail .name { color: var(--gold-bright); }
+
+  /* Status pips: flat squared LCARS markers, no glow. Offline blinks (red
+     alert) by opacity rather than the base neon pulse. */
+  body[data-theme="lcars"] .link-dot {
+    border-radius: 2px;
+    box-shadow: none !important;
+  }
+  body[data-theme="lcars"] .link-dot.bad { animation: lcars-blink 0.8s steps(1, end) infinite; }
+  body[data-theme="lcars"] .link-dot.skipped { border-color: var(--slate); }
+  @keyframes lcars-blink {
+    0%, 49%   { opacity: 1; }
+    50%, 100% { opacity: 0.25; }
+  }
+
+  /* Console, side panel, modal, tooltip: black with orange framing. */
+  body[data-theme="lcars"] .console {
+    background: #000;
+    border-top: 4px solid var(--gold);
+    border-top-right-radius: 22px;
+  }
+  body[data-theme="lcars"] .console .header { color: var(--gold); }
+  body[data-theme="lcars"] .console .candle { background: var(--gold); box-shadow: none; border-radius: 2px; animation: lcars-blink 1.2s steps(1, end) infinite; }
+  body[data-theme="lcars"] .console .tag-info { color: var(--gold); }
+
+  body[data-theme="lcars"] .sidepanel {
+    background: #000;
+    border-left: 4px solid var(--gold);
+  }
+  body[data-theme="lcars"] .sidepanel h3 { color: var(--gold); }
+  body[data-theme="lcars"] .sidepanel .row .v { color: var(--ink); }
+
+  body[data-theme="lcars"] .modal {
+    background: #000;
+    border: 2px solid var(--gold);
+    border-radius: 4px 28px 28px 4px;
+    box-shadow: none;
+  }
+  body[data-theme="lcars"] .modal::before,
+  body[data-theme="lcars"] .modal::after { display: none; }
+  body[data-theme="lcars"] .modal .head { border-bottom: 3px solid #000; }
+  body[data-theme="lcars"] .modal .head h2 { color: var(--gold); }
+  body[data-theme="lcars"] .modal .foot { border-top: 3px solid #000; }
+  body[data-theme="lcars"] .modal input,
+  body[data-theme="lcars"] .modal select,
+  body[data-theme="lcars"] .modal textarea {
+    background: #000;
+    color: var(--ink);
+    border: 1px solid var(--gold-dim);
+    border-radius: 4px;
+  }
+  body[data-theme="lcars"] .modal input:focus,
+  body[data-theme="lcars"] .modal select:focus,
+  body[data-theme="lcars"] .modal textarea:focus {
+    border-color: var(--gold);
+    box-shadow: none;
+  }
+
+  body[data-theme="lcars"] .group {
+    background: rgba(255, 153, 51, 0.04);
+    border-radius: 4px 16px 16px 4px;
+    box-shadow: none;
+  }
+  body[data-theme="lcars"] .group .label { text-shadow: none; }
+  body[data-theme="lcars"] .empty-hint h1 {
+    color: var(--gold);
+    text-shadow: none;
+    font-weight: 700;
+    font-stretch: 85%;
+    letter-spacing: 0.4em;
+  }
+  body[data-theme="lcars"] .tip {
+    background: #000;
+    border: 1px solid var(--gold);
+    border-radius: 4px 14px 14px 4px;
+    box-shadow: none;
+  }
+  body[data-theme="lcars"] .tip .ttl { color: var(--gold); }
+  body[data-theme="lcars"] .classifier-chip { border-radius: 8px; box-shadow: none; }
+  body[data-theme="lcars"] .trust-body code { background: rgba(255, 153, 51, 0.12); }
+  body[data-theme="lcars"] .trust-body h3,
+  body[data-theme="lcars"] .trust-body a { color: var(--gold); }
