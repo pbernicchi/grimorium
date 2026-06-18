@@ -10,6 +10,7 @@ import {
 import { grimorium } from "../src/js/themes/grimorium.js";
 import { cassette } from "../src/js/themes/cassette.js";
 import { orrery } from "../src/js/themes/orrery.js";
+import { lcars } from "../src/js/themes/lcars.js";
 import { buildCard } from "../src/js/render.js";
 import { makeChain, makeLink } from "./helpers/fixtures.js";
 
@@ -99,16 +100,18 @@ describe("setActiveTheme", () => {
 });
 
 describe("THEMES registry", () => {
-  it("exposes grimorium, cassette, and orrery", () => {
+  it("exposes grimorium, cassette, orrery, and lcars", () => {
     expect(THEMES.grimorium).toBe(grimorium);
     expect(THEMES.cassette).toBe(cassette);
     expect(THEMES.orrery).toBe(orrery);
+    expect(THEMES.lcars).toBe(lcars);
   });
 
   it("themeById returns the requested theme", () => {
     expect(themeById("cassette")).toBe(cassette);
     expect(themeById("grimorium")).toBe(grimorium);
     expect(themeById("orrery")).toBe(orrery);
+    expect(themeById("lcars")).toBe(lcars);
   });
 
   it("themeById falls back to orrery (the default) for unknown ids", () => {
@@ -180,6 +183,51 @@ describe("Cassette theme shape", () => {
   it("renames the sigil noun to tag", () => {
     expect(cassette.labels.nouns.sigil.toLowerCase()).toBe("tag");
     expect(cassette.labels.nouns.sigils.toLowerCase()).toBe("tags");
+  });
+});
+
+describe("LCARS theme shape", () => {
+  it("has full theme structure", () => {
+    expect(lcars.id).toBe("lcars");
+    expect(lcars.name).toBeTruthy();
+    expect(lcars.labels.state.ok).toBe("ONLINE");
+    expect(lcars.labels.state.bad).toBe("OFFLINE");
+    expect(lcars.labels.state.skipped).toBe("STANDBY");
+    expect(lcars.glyphs.length).toBeGreaterThan(20);
+    expect(typeof lcars.statusColorVar).toBe("function");
+    expect(typeof lcars.createDecoration).toBe("function");
+  });
+
+  it("provides a display label for every semantic state", () => {
+    for (const s of ["ok", "warn", "bad", "check", "skipped", "unk"]) {
+      expect(typeof lcars.labels.state[s]).toBe("string");
+      expect(lcars.labels.state[s].length).toBeGreaterThan(0);
+    }
+  });
+
+  it("provides every required palette entry", () => {
+    const required = ["--bg-0", "--bg-1", "--bg-2", "--gold", "--verdant", "--amber",
+                      "--sienna", "--ink", "--ink-dim", "--vellum", "--panel-edge"];
+    for (const key of required) {
+      expect(lcars.palette[key]).toBeTruthy();
+    }
+  });
+
+  it("statusColorVar returns a var() expression for every state", () => {
+    for (const s of ["ok", "warn", "bad", "check", "skipped", "unk"]) {
+      expect(lcars.statusColorVar(s)).toMatch(/^var\(--/);
+    }
+  });
+
+  it("is rectilinear: no radial layout, no circular cards", () => {
+    expect(lcars.layoutMode).toBeUndefined();
+    expect(lcars.cardShape).toBeUndefined();
+  });
+
+  it("uses Starfleet-computer action labels", () => {
+    expect(lcars.labels.actions.scryAll).toMatch(/SCAN/);
+    expect(lcars.labels.actions.inscribe).toBe("CONFIG");
+    expect(lcars.labels.actions.saveApply).toBe("ENGAGE");
   });
 });
 
