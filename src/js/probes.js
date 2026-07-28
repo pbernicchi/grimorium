@@ -7,6 +7,13 @@ import { fmtLatency, getByPath } from "./state.js";
 const DOH_URL = "https://cloudflare-dns.com/dns-query";
 const SLOW_THRESHOLD_MS = 1500;
 
+// The "slow" cutoff scales with the configured timeout so a single knob covers
+// both LAN and high-latency paths (VPN, relayed tunnels, cellular). At the
+// default timeoutMs of 5000 this is exactly the historical 1500ms.
+function slowThreshold(timeoutMs) {
+  return Math.max(SLOW_THRESHOLD_MS, Math.round((timeoutMs || 5000) * 0.3));
+}
+
 export async function runLink(link, timeoutMs) {
   switch (link.probe) {
     case "doh":        return probeDoh(link.target, link.expect, timeoutMs);
@@ -72,7 +79,7 @@ export async function probeHttp(target, expect, timeoutMs, useCors) {
 
     // no-cors path: opaque, all we can say is "something answered".
     if (!useCors || r.type === "opaque") {
-      const slow = latency > SLOW_THRESHOLD_MS;
+      const slow = latency > slowThreshold(timeoutMs);
       return {
         state: slow ? "warn" : "ok",
         latency,
@@ -137,8 +144,8 @@ export async function probeWsTcp(target, timeoutMs) {
     // Fast onerror == fast TCP response (RST or non-WS reply). Slow == filtered.
     ws.onerror = () => {
       const latency = performance.now() - t0;
-      if (latency < SLOW_THRESHOLD_MS) finish("ok", "port responsive (TCP, non-WS)");
-      else                              finish("bad", "no response");
+      if (latency < slowThreshold(timeoutMs)) finish("ok", "port responsive (TCP, non-WS)");
+      else                                    finish("bad", "no response");
     };
     setTimeout(() => finish("bad", "timeout"), timeoutMs);
   });

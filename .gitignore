@@ -2,3 +2,15 @@ export.json
 node_modules/
 *.log
 .vitest-cache/
+grimorium-live.json
+*.local.json
+
+# Scan output and derived configs. These describe the real LAN -- hostnames,
+# addresses, open ports -- and this repo is public.
+scan.xml
+targets.txt
+grimorium-scanned.json
+grim.json
+grim-fixed.json
+# retune embeds the measured address/hostname tables inline
+grimorium-retune.py

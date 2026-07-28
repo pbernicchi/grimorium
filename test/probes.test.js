@@ -224,6 +224,13 @@ describe("probeWsTcp", () => {
     expect(r.detail).toBe("no response");
   }, 10000);
 
+  it("scales the slow cutoff with timeoutMs so high-latency paths stay ok", async () => {
+    mockWebSocket([{ match: "example.com:9999", event: "error", afterMs: 1800 }]);
+    const r = await probeWsTcp("example.com:9999", 10000);
+    expect(r.state).toBe("ok");
+    expect(r.detail).toMatch(/responsive/);
+  }, 10000);
+
   it("times out when no event fires within timeoutMs", async () => {
     mockWebSocket([{ match: "example.com:1", event: "open", afterMs: 5000 }]);
     const r = await probeWsTcp("example.com:1", 200);
