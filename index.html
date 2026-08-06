@@ -1829,6 +1829,9 @@
   // src/js/probes.js
   var DOH_URL = "https://cloudflare-dns.com/dns-query";
   var SLOW_THRESHOLD_MS = 1500;
+  function slowThreshold(timeoutMs) {
+    return Math.max(SLOW_THRESHOLD_MS, Math.round((timeoutMs || 5e3) * 0.3));
+  }
   async function runLink(link, timeoutMs) {
     switch (link.probe) {
       case "doh":
@@ -1895,7 +1898,7 @@
       const latency = performance.now() - t0;
       clearTimeout(timer);
       if (!useCors || r.type === "opaque") {
-        const slow = latency > SLOW_THRESHOLD_MS;
+        const slow = latency > slowThreshold(timeoutMs);
         return {
           state: slow ? "warn" : "ok",
           latency,
@@ -1962,7 +1965,7 @@
       ws.onopen = () => finish("ok", "port speaks WebSocket");
       ws.onerror = () => {
         const latency = performance.now() - t0;
-        if (latency < SLOW_THRESHOLD_MS) finish("ok", "port responsive (TCP, non-WS)");
+        if (latency < slowThreshold(timeoutMs)) finish("ok", "port responsive (TCP, non-WS)");
         else finish("bad", "no response");
       };
       setTimeout(() => finish("bad", "timeout"), timeoutMs);
