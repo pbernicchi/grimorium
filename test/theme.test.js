@@ -248,6 +248,44 @@ describe("t / tFrom", () => {
     expect(tFrom(grimorium, "nonsense.path")).toBe("nonsense.path");
   });
 
+  it("falls back to BASE_LABELS for keys a theme does not define", () => {
+    // orrery defines no meta.* block, so it inherits the original wording
+    expect(tFrom(orrery, "meta.up")).toBe("Hold");
+    expect(tFrom(orrery, "fields.parallel")).toBe("Parallel Chains");
+    expect(tFrom(orrery, "confirmMsg.banishChain", "x"))
+      .toBe("Banish chain 'x'? This cannot be undone.");
+  });
+
+  it("lets a theme override BASE_LABELS", () => {
+    expect(tFrom(lcars, "meta.up")).toBe("ONLINE");
+    expect(tFrom(lcars, "fields.parallel")).toBe("Parallel Probes");
+    expect(tFrom(lcars, "confirmMsg.banishChain", "x"))
+      .toBe("Purge node 'x'? This cannot be undone.");
+  });
+
+  it("applies placeholders via data-label-placeholder", () => {
+    document.body.innerHTML =
+      '<input id="p" data-label-placeholder="fields.sigilNamePlaceholder">';
+    applyLabels(lcars);
+    expect(document.getElementById("p").getAttribute("placeholder")).toBe("engineering");
+    applyLabels(orrery);
+    expect(document.getElementById("p").getAttribute("placeholder")).toBe("networking");
+    document.body.innerHTML = "";
+  });
+
+  it("keeps the LCARS interface free of grimoire vocabulary", () => {
+    const archaic = /grimoire|inscri|banish|sigil|scry|rite|vellum/i;
+    const walk = (o, path = "") => {
+      for (const [k, v] of Object.entries(o)) {
+        const p = path ? path + "." + k : k;
+        if (typeof v === "string") expect(v, p).not.toMatch(archaic);
+        else if (typeof v === "function") expect(String(v("x", 1)), p).not.toMatch(archaic);
+        else if (v && typeof v === "object") walk(v, p);
+      }
+    };
+    walk(lcars.labels);
+  });
+
   it("t() resolves against the active theme", () => {
     applyTheme(grimorium);
     expect(t("actions.banish")).toBe("Banish");

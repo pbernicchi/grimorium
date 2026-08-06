@@ -21,11 +21,11 @@
   <button class="btn ghost" id="btn-trust" title="what this page can and cannot do" data-label="actions.trust">Provenance</button>
   <div class="spacer"></div>
   <div class="meta">
-    <div><span class="k">Chains</span><span class="v" id="meta-chains">0</span></div>
-    <div><span class="k">Links</span><span class="v" id="meta-links">0</span></div>
-    <div><span class="k">Hold</span><span class="v" id="meta-up" style="color:var(--verdant)">0</span></div>
-    <div><span class="k">Sever</span><span class="v" id="meta-down" style="color:var(--sienna)">0</span></div>
-    <div><span class="k">Last</span><span class="v" id="meta-last">never</span></div>
+    <div><span class="k" data-label="meta.chains">Chains</span><span class="v" id="meta-chains">0</span></div>
+    <div><span class="k" data-label="meta.links">Links</span><span class="v" id="meta-links">0</span></div>
+    <div><span class="k" data-label="meta.up">Hold</span><span class="v" id="meta-up" style="color:var(--verdant)">0</span></div>
+    <div><span class="k" data-label="meta.down">Sever</span><span class="v" id="meta-down" style="color:var(--sienna)">0</span></div>
+    <div><span class="k" data-label="meta.last">Last</span><span class="v" id="meta-last">never</span></div>
   </div>
   <button class="btn ghost" id="btn-group" data-label="actions.group">Group</button>
   <button class="btn ghost" id="btn-relayout" data-label="actions.reArrange">Re-Arrange</button>
@@ -74,11 +74,11 @@
       <div style="margin-top:20px;padding-top:14px;border-top:1px dashed var(--ink-faint)">
         <label data-label="nouns.siteSettings">Rite Settings</label>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-          <div><label>Probe Timeout (ms)</label>
+          <div><label data-label="fields.timeout">Probe Timeout (ms)</label>
             <input type="number" id="cfg-timeout" min="500" max="30000" step="100" value="5000"></div>
-          <div><label>Parallel Chains</label>
+          <div><label data-label="fields.parallel">Parallel Chains</label>
             <input type="number" id="cfg-parallel" min="1" max="32" step="1" value="6"></div>
-          <div><label>Theme</label>
+          <div><label data-label="fields.theme">Theme</label>
             <select id="cfg-theme"></select></div>
         </div>
       </div>
@@ -134,8 +134,8 @@
       <button class="btn ghost" id="btn-close-cls" data-label="actions.close">Close</button>
     </div>
     <div class="body">
-      <label>Name</label>
-      <input type="text" id="cls-name" placeholder="networking">
+      <label data-label="fields.name">Name</label>
+      <input type="text" id="cls-name" data-label-placeholder="fields.sigilNamePlaceholder" placeholder="networking">
       <div style="margin-top:12px"><label>Glyph</label>
         <div id="cls-glyph-picker" style="display:flex;flex-wrap:wrap;gap:4px;max-height:160px;overflow-y:auto;border:1px solid var(--panel-edge);padding:6px;"></div>
       </div>
