@@ -65,14 +65,61 @@ export function t(path, ...args) {
   return tFrom(activeTheme, path, ...args);
 }
 
-export function tFrom(theme, path, ...args) {
-  if (!theme || !theme.labels) return path;
-  const parts = path.split(".");
-  let v = theme.labels;
+/**
+ * Strings that used to be hardcoded in template.html and main.js, which meant
+ * every theme silently inherited the grimoire's vocabulary no matter what its
+ * own labels said — "Banish", "Sigil", "Hold/Sever", "the grimoire to its
+ * initial inscription". They live here so a theme can override them, and the
+ * values are the originals so the grimoire/cassette/orrery wording is
+ * unchanged for anyone who does not.
+ */
+export const BASE_LABELS = {
+  meta: {
+    chains: "Chains",
+    links:  "Links",
+    up:     "Hold",
+    down:   "Sever",
+    last:   "Last"
+  },
+  fields: {
+    timeout:              "Probe Timeout (ms)",
+    parallel:             "Parallel Chains",
+    theme:                "Theme",
+    name:                 "Name",
+    addressPlaceholder:   "192.168.1.10 or example.com",
+    linkNamePlaceholder:  "link name",
+    sigilNamePlaceholder: "networking"
+  },
+  titles: {
+    addSigil:   "Add a new sigil",
+    removeLink: "Remove link"
+  },
+  empty: {
+    noSigils: "No sigils yet. Create one from the shelf, then come back."
+  },
+  modalTitles: {
+    bindSigils: (name) => "Bind sigils — " + name
+  },
+  confirmMsg: {
+    banishChain: (name) => "Banish chain '" + name + "'? This cannot be undone.",
+    banishSigil: (name, n) => "Banish sigil '" + name + "'? It will be removed from " + n + " chain(s).",
+    reset:       "Reset the grimoire to its initial inscription? (clears card positions and sigils too)"
+  }
+};
+
+function lookup(root, parts) {
+  let v = root;
   for (const p of parts) {
-    if (v == null) return path;
+    if (v == null) return undefined;
     v = v[p];
   }
+  return v;
+}
+
+export function tFrom(theme, path, ...args) {
+  const parts = path.split(".");
+  let v = theme && theme.labels ? lookup(theme.labels, parts) : undefined;
+  if (v === undefined) v = lookup(BASE_LABELS, parts);
   if (typeof v === "function") return v(...args);
   return v ?? path;
 }
@@ -88,6 +135,11 @@ export function applyLabels(theme = activeTheme, doc = globalThis.document) {
     const path = el.dataset.label;
     const v = tFrom(theme, path);
     if (typeof v === "string") el.textContent = v;
+  }
+  // Placeholders are an attribute, not text, so they need their own hook.
+  for (const el of doc.querySelectorAll("[data-label-placeholder]")) {
+    const v = tFrom(theme, el.dataset.labelPlaceholder);
+    if (typeof v === "string") el.setAttribute("placeholder", v);
   }
   const pageTitle = tFrom(theme, "brand.pageTitle");
   if (typeof pageTitle === "string" && pageTitle !== "brand.pageTitle") {

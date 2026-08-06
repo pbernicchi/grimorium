@@ -5,9 +5,10 @@
 // caps, right-justified labels. Rectilinear — chains render as rounded
 // panels on the default grid, not as spheres on orbits.
 //
-// Palette discipline: orange is the structural/chrome hue. State is carried
-// by the LCARS secondary hues — green (online), gold (caution), red
-// (offline), apricot (scanning), blue (standby).
+// Palette discipline: orange peel is the structural/chrome hue. State is
+// carried by the LCARS secondary hues — anakiwa (online), sunflower (caution),
+// chestnut rose (offline), golden tanoi (scanning), lilac (standby). No green
+// and no saturated red; see the note on the palette block below.
 
 import { hash32 } from "../state.js";
 import { svg as svgEl } from "../render.js";
@@ -77,9 +78,39 @@ export const lcars = {
       sigilNew:      "New Tag",
       sigilEdit:     "Edit Tag",
       sigilDefault:  "Tag",
-      trust:         "Access Authorization"
+      trust:         "Access Authorization",
+      bindSigils:    (name) => "LINK TAGS // " + name
+    },
+    // Topbar counters. These match the state labels exactly rather than
+    // inventing a second vocabulary — a card that reads ONLINE is counted
+    // under ONLINE.
+    meta: {
+      chains: "NODES",
+      links:  "PROBES",
+      up:     "ONLINE",
+      down:   "OFFLINE",
+      last:   "LAST SWEEP"
+    },
+    fields: {
+      timeout:              "Probe Timeout (ms)",
+      parallel:             "Parallel Probes",
+      theme:                "Interface",
+      name:                 "Designation",
+      addressPlaceholder:   "192.168.1.10 or example.com",
+      linkNamePlaceholder:  "probe designation",
+      sigilNamePlaceholder: "engineering"
+    },
+    titles: {
+      addSigil:   "Register a new tag",
+      removeLink: "Remove probe"
+    },
+    confirmMsg: {
+      banishChain: (name) => "Purge node '" + name + "'? This cannot be undone.",
+      banishSigil: (name, n) => "Purge tag '" + name + "'? It will be removed from " + n + " node(s).",
+      reset:       "Restore factory configuration? Node positions and tags are cleared."
     },
     empty: {
+      noSigils:        "No tags registered. Create one from the rail, then return.",
       noChainsHead:    "no nodes registered.",
       pressHint:       "press CONFIG to begin.",
       noChainsForScry: "no nodes with probes — configure some",
@@ -136,10 +167,23 @@ export const lcars = {
     "⊕","⊗","⊞","⊟","⊠","↻","↺","⇄","⇆","≡","∷","⌬","⏣","⎔"
   ],
 
-  // Canonical LCARS hues (TheLCARS / Pi-hole LCARS palette) mapped onto the
-  // shared var names. Neon-carrot orange is the chrome; martian green, golden
-  // tanoi, and red-alert carry state; anakiwa blue is readout text; lilac /
-  // eggplant are the secondary family. The serif var is repointed at a
+  // Canonical Okuda LCARS hues mapped onto the shared var names.
+  //
+  // The governing constraint: LCARS has no traffic-light semantic. The TNG-era
+  // palette is a narrow band of warm pastels plus two blues on black, and it
+  // contains no green at all. Mapping ok->green / bad->saturated red imports a
+  // convention from another design language, and because a state color fills
+  // every card header, that trio ends up dominating the screen and reading as
+  // primary RGB rather than as LCARS.
+  //
+  // So state is carried by the LCARS secondary family instead, ordered
+  // cool -> warm -> hot: anakiwa (nominal), sunflower (caution), chestnut rose
+  // (fault). That is both more faithful and more legible than green/red, which
+  // partially collapses under deuteranopia. Every state fill keeps >= 4.4:1
+  // against the black label text it carries; chestnut rose at 5.7:1 is actually
+  // an improvement on the 4.3:1 the old pure red managed.
+  //
+  // Orange peel stays the structural chrome. The serif var is repointed at a
   // condensed sans so headings read as LCARS lettering — a full page reload on
   // theme switch restores the default elsewhere.
   palette: {
@@ -147,25 +191,25 @@ export const lcars = {
     "--bg-1":           "#000000",
     "--bg-2":           "#08080c",
     "--vellum":         "#ffcc99",   // tanoi
-    "--vellum-dim":     "#8899bb",
-    "--ink":            "#99ccff",   // anakiwa — LCARS readout text is blue
+    "--vellum-dim":     "#886699",   // muted plum (no data)
+    "--ink":            "#ccddff",   // periwinkle — readout text, clear of ok
     "--ink-dim":        "#cc99cc",   // lilac
-    "--ink-faint":      "#445577",
-    "--gold":           "#ff9933",   // neon-carrot — primary chrome
-    "--gold-dim":       "#cc6622",
-    "--gold-bright":    "#ffcc66",   // golden-tanoi
-    "--amber":          "#ffcc66",   // golden-tanoi (caution)
+    "--ink-faint":      "#554466",   // eggplant, dimmed
+    "--gold":           "#ff9900",   // orange peel — primary chrome
+    "--gold-dim":       "#cc7700",
+    "--gold-bright":    "#ffcc66",   // golden tanoi (scanning)
+    "--amber":          "#ffcc00",   // sunflower (caution)
     "--brown":          "#cc99cc",   // lilac
     "--brown-deep":     "#664466",   // eggplant
     "--moss":           "#cc99cc",   // lilac
-    "--verdant":        "#99dd66",   // martian green (online)
-    "--verdant-bright": "#bbf088",
-    "--sienna":         "#e10e10",   // red-alert (offline)
-    "--rust":           "#882211",   // klingon
-    "--slate":          "#5577cc",   // mariner-ish (standby)
-    "--slate-dim":      "#2a3a66",
+    "--verdant":        "#99ccff",   // anakiwa (online)
+    "--verdant-bright": "#bbddff",
+    "--sienna":         "#cc6666",   // chestnut rose (offline)
+    "--rust":           "#cc6699",   // hopbush
+    "--slate":          "#cc99cc",   // lilac (standby)
+    "--slate-dim":      "#4a3a55",
     "--panel":          "rgba(0, 0, 0, 0.92)",
-    "--panel-edge":     "rgba(255, 153, 51, 0.6)",
+    "--panel-edge":     "rgba(255, 153, 0, 0.6)",
     "--serif":          "'Antonio', 'Oswald', 'Roboto Condensed', 'Helvetica Neue', 'Arial Narrow', Arial, sans-serif"
   },
 

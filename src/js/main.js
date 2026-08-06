@@ -406,7 +406,7 @@ function openMobileTagPicker(chainId) {
     list.innerHTML = "";
     if (!config.classifiers.length) {
       list.append(el("div", { style: { color: "var(--ink-dim)", fontStyle: "italic" } },
-        "No sigils yet. Create one from the shelf, then come back."));
+        t("empty.noSigils")));
       return;
     }
     for (const cls of config.classifiers) {
@@ -439,7 +439,7 @@ function openMobileTagPicker(chainId) {
 
   const sheet = el("div", { class: "modal", style: { width: "100vw", maxWidth: "100vw" } },
     el("div", { class: "head" },
-      el("h2", {}, "Bind sigils — " + chain.name),
+      el("h2", {}, t("modalTitles.bindSigils", chain.name)),
       el("button", { class: "btn ghost", onClick: closeMobileTagPicker }, t("actions.close"))
     ),
     el("div", { class: "body" }, list),
@@ -662,7 +662,7 @@ function renderShelf() {
     shelf.appendChild(s);
     sigilEls.set(cls.id, s);
   }
-  const add = el("div", { class: "sigil add", title: "Add a new sigil" }, "+");
+  const add = el("div", { class: "sigil add", title: t("titles.addSigil") }, "+");
   add.addEventListener("click", () => openClassifierModal(null));
   shelf.appendChild(add);
 }
@@ -918,7 +918,7 @@ function saveChainModal() {
 
 function deleteChainModal() {
   if (!chainDraft) return;
-  if (!confirm("Banish chain '" + chainDraft.name + "'? This cannot be undone.")) return;
+  if (!confirm(t("confirmMsg.banishChain", chainDraft.name))) return;
   const id = chainDraft.id;
   const name = chainDraft.name;
   config.chains = config.chains.filter(c => c.id !== id);
@@ -985,7 +985,7 @@ function chainEditorBlock(chain, classifiers, onDelete, onRefresh) {
     el("div", {},
       el("label", {}, t("nouns.addressLabel")),
       el("input", { type: "text", value: chain.address || "",
-        placeholder: "192.168.1.10 or example.com",
+        placeholder: t("fields.addressPlaceholder"),
         onInput: (e) => chain.address = e.target.value })
     ),
     el("div", {},
@@ -1053,7 +1053,7 @@ function chainEditorBlock(chain, classifiers, onDelete, onRefresh) {
 
 function linkEditorRow(chain, link) {
   const row = el("div", { class: "link-edit-row" });
-  const nameI = el("input", { type: "text", value: link.name, placeholder: "link name",
+  const nameI = el("input", { type: "text", value: link.name, placeholder: t("fields.linkNamePlaceholder"),
     onInput: (e) => link.name = e.target.value });
   const probeS = el("select", {
     onChange: (e) => {
@@ -1087,7 +1087,7 @@ function linkEditorRow(chain, link) {
   }
   refreshExpectCell();
 
-  const x = el("button", { class: "x", title: "Remove link",
+  const x = el("button", { class: "x", title: t("titles.removeLink"),
     onClick: () => {
       chain.links = chain.links.filter(l => l.id !== link.id);
       row.remove();
@@ -1266,8 +1266,8 @@ function deleteClassifier() {
   if (!editingClassifierId) return;
   const cls = config.classifiers.find(c => c.id === editingClassifierId);
   if (!cls) return;
-  if (!confirm("Banish sigil '" + cls.name + "'? It will be removed from " +
-               config.chains.filter(c => c.classifierIds.includes(cls.id)).length + " chain(s).")) return;
+  if (!confirm(t("confirmMsg.banishSigil", cls.name,
+               config.chains.filter(c => c.classifierIds.includes(cls.id)).length))) return;
   config.classifiers = config.classifiers.filter(c => c.id !== editingClassifierId);
   for (const ch of config.chains) {
     ch.classifierIds = ch.classifierIds.filter(x => x !== editingClassifierId);
@@ -1366,7 +1366,7 @@ $("#btn-add-chain").addEventListener("click", () => {
   renderChainsEditor();
 });
 $("#btn-reset").addEventListener("click", () => {
-  if (!confirm("Reset the grimoire to its initial inscription? (clears card positions and sigils too)")) return;
+  if (!confirm(t("confirmMsg.reset"))) return;
   draft = defaultConfig();
   renderChainsEditor();
   $("#cfg-timeout").value = draft.timeoutMs;
