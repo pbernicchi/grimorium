@@ -5,6 +5,15 @@ import { runLink as defaultRunLink } from "./probes.js";
 import { fmtLatency } from "./state.js";
 
 const IDENTITY = (s) => s;
+// Label lookup, injected like stateLabel so this module stays DOM- and
+// theme-free. Defaults reproduce the original hardcoded strings, so a caller
+// that does not pass `t` behaves exactly as before.
+const DEFAULT_T = (path, ...a) => ({
+  "log.probing":          () => "divining…",
+  "log.scanStart":        (n) => "the rite begins // " + n + " chains",
+  "log.scanEnd":          (n) => "the rite concludes // " + n + " chains scryed",
+  "empty.noChainsForScry": () => "no chains with links — inscribe some"
+}[path] ?? (() => path))(...a);
 
 /**
  * Run a single chain end-to-end, mutating the provided statusMap.
@@ -25,12 +34,13 @@ export async function runChain(chain, statusMap, opts = {}) {
     onTick = noop,
     log = noop,
     runLink = defaultRunLink,
-    stateLabel = IDENTITY
+    stateLabel = IDENTITY,
+    t = DEFAULT_T
   } = opts;
   const now = () => Date.now();
 
   for (const link of chain.links) {
-    statusMap.set(link.id, { state: "check", latency: null, detail: "divining…", ts: now() });
+    statusMap.set(link.id, { state: "check", latency: null, detail: t("log.probing"), ts: now() });
     onTick(link.id);
   }
 
@@ -65,11 +75,12 @@ export async function rescryLink(chain, link, statusMap, opts = {}) {
     onTick = noop,
     log = noop,
     runLink = defaultRunLink,
-    stateLabel = IDENTITY
+    stateLabel = IDENTITY,
+    t = DEFAULT_T
   } = opts;
   const now = () => Date.now();
-  log(chain.name + " · " + link.name + " — divining…", "dim");
-  statusMap.set(link.id, { state: "check", latency: null, detail: "divining…", ts: now() });
+  log(chain.name + " · " + link.name + " — " + t("log.probing"), "dim");
+  statusMap.set(link.id, { state: "check", latency: null, detail: t("log.probing"), ts: now() });
   onTick(link.id);
   const r = await runLink(link, timeoutMs);
   statusMap.set(link.id, { ...r, ts: now() });
@@ -97,20 +108,20 @@ export async function rescryLink(chain, link, statusMap, opts = {}) {
  * @returns {Promise<{done: number, scanned: number}>}
  */
 export async function scanAll(chains, statusMap, opts = {}) {
-  const { parallel = 6, onChainTick = noop, log = noop } = opts;
+  const { parallel = 6, onChainTick = noop, log = noop, t = DEFAULT_T } = opts;
   const eligible = chains.filter(c => c.links.length > 0);
   if (!eligible.length) {
-    log("no chains with links — inscribe some", "warn");
+    log(t("empty.noChainsForScry"), "warn");
     return { done: 0, scanned: 0 };
   }
 
-  log("the rite begins // " + eligible.length + " chains", "info");
+  log(t("log.scanStart", eligible.length), "info");
 
   // Prime everything to "check" so the UI shows divining state immediately.
   const now = Date.now();
   for (const c of eligible) {
     for (const l of c.links) {
-      statusMap.set(l.id, { state: "check", latency: null, detail: "divining…", ts: now });
+      statusMap.set(l.id, { state: "check", latency: null, detail: t("log.probing"), ts: now });
     }
     onChainTick(c);
   }
@@ -127,7 +138,7 @@ export async function scanAll(chains, statusMap, opts = {}) {
     }
   }));
 
-  log("the rite concludes // " + done + " chains scryed", "info");
+  log(t("log.scanEnd", done), "info");
   return { done, scanned: eligible.length };
 }
 

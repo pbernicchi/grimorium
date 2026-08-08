@@ -122,6 +122,7 @@ export const lcars = {
       backupNote:       "Register hosts and the probes that monitor them."
     },
     log: {
+      probing:       "scanning…",
       scanInFlight:  "scan already running",
       scanStart:     (n) => "scan initiated // " + n + " nodes",
       scanEnd:       (n) => "scan complete // " + n + " nodes",

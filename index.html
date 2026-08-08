@@ -1990,17 +1990,24 @@
 
   // src/js/runner.js
   var IDENTITY = (s) => s;
+  var DEFAULT_T = (path, ...a) => ({
+    "log.probing": () => "divining\u2026",
+    "log.scanStart": (n) => "the rite begins // " + n + " chains",
+    "log.scanEnd": (n) => "the rite concludes // " + n + " chains scryed",
+    "empty.noChainsForScry": () => "no chains with links \u2014 inscribe some"
+  }[path] ?? (() => path))(...a);
   async function runChain(chain, statusMap2, opts = {}) {
     const {
       timeoutMs = 5e3,
       onTick = noop,
       log: log2 = noop,
       runLink: runLink2 = runLink,
-      stateLabel: stateLabel2 = IDENTITY
+      stateLabel: stateLabel2 = IDENTITY,
+      t: t2 = DEFAULT_T
     } = opts;
     const now = () => Date.now();
     for (const link of chain.links) {
-      statusMap2.set(link.id, { state: "check", latency: null, detail: "divining\u2026", ts: now() });
+      statusMap2.set(link.id, { state: "check", latency: null, detail: t2("log.probing"), ts: now() });
       onTick(link.id);
     }
     let broke = false;
@@ -2026,11 +2033,12 @@
       onTick = noop,
       log: log2 = noop,
       runLink: runLink2 = runLink,
-      stateLabel: stateLabel2 = IDENTITY
+      stateLabel: stateLabel2 = IDENTITY,
+      t: t2 = DEFAULT_T
     } = opts;
     const now = () => Date.now();
-    log2(chain.name + " \xB7 " + link.name + " \u2014 divining\u2026", "dim");
-    statusMap2.set(link.id, { state: "check", latency: null, detail: "divining\u2026", ts: now() });
+    log2(chain.name + " \xB7 " + link.name + " \u2014 " + t2("log.probing"), "dim");
+    statusMap2.set(link.id, { state: "check", latency: null, detail: t2("log.probing"), ts: now() });
     onTick(link.id);
     const r = await runLink2(link, timeoutMs);
     statusMap2.set(link.id, { ...r, ts: now() });
@@ -2040,17 +2048,17 @@
     return r;
   }
   async function scanAll(chains, statusMap2, opts = {}) {
-    const { parallel = 6, onChainTick = noop, log: log2 = noop } = opts;
+    const { parallel = 6, onChainTick = noop, log: log2 = noop, t: t2 = DEFAULT_T } = opts;
     const eligible = chains.filter((c) => c.links.length > 0);
     if (!eligible.length) {
-      log2("no chains with links \u2014 inscribe some", "warn");
+      log2(t2("empty.noChainsForScry"), "warn");
       return { done: 0, scanned: 0 };
     }
-    log2("the rite begins // " + eligible.length + " chains", "info");
+    log2(t2("log.scanStart", eligible.length), "info");
     const now = Date.now();
     for (const c of eligible) {
       for (const l of c.links) {
-        statusMap2.set(l.id, { state: "check", latency: null, detail: "divining\u2026", ts: now });
+        statusMap2.set(l.id, { state: "check", latency: null, detail: t2("log.probing"), ts: now });
       }
       onChainTick(c);
     }
@@ -2065,7 +2073,7 @@
         onChainTick(c);
       }
     }));
-    log2("the rite concludes // " + done + " chains scryed", "info");
+    log2(t2("log.scanEnd", done), "info");
     return { done, scanned: eligible.length };
   }
   function noop() {
@@ -3754,6 +3762,7 @@
         backupNote: "Register hosts and the probes that monitor them."
       },
       log: {
+        probing: "scanning\u2026",
         scanInFlight: "scan already running",
         scanStart: (n) => "scan initiated // " + n + " nodes",
         scanEnd: (n) => "scan complete // " + n + " nodes",
@@ -4060,6 +4069,9 @@
     modalTitles: {
       bindSigils: (name) => "Bind sigils \u2014 " + name
     },
+    log: {
+      probing: "divining\u2026"
+    },
     confirmMsg: {
       banishChain: (name) => "Banish chain '" + name + "'? This cannot be undone.",
       banishSigil: (name, n) => "Banish sigil '" + name + "'? It will be removed from " + n + " chain(s).",
@@ -4179,6 +4191,7 @@
       parallel: config.parallel,
       log,
       stateLabel,
+      t,
       onChainTick: (c) => {
         updateChainVisual(c.id);
         updateMeta();
@@ -4195,6 +4208,7 @@
       timeoutMs: config.timeoutMs,
       log,
       stateLabel,
+      t,
       onTick: (linkId) => {
         updateChainVisual(chain.id);
         renderSidepanel(linkId);

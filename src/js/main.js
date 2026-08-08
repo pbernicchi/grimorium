@@ -108,6 +108,7 @@ async function scanAll() {
     parallel: config.parallel,
     log,
     stateLabel: stateLabel,
+    t: t,
     onChainTick: (c) => {
       updateChainVisual(c.id);
       updateMeta();
@@ -126,6 +127,7 @@ async function rescryLink(chain, link) {
     timeoutMs: config.timeoutMs,
     log,
     stateLabel: stateLabel,
+    t: t,
     onTick: (linkId) => {
       updateChainVisual(chain.id);
       renderSidepanel(linkId);

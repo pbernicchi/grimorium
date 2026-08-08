@@ -100,6 +100,9 @@ export const BASE_LABELS = {
   modalTitles: {
     bindSigils: (name) => "Bind sigils — " + name
   },
+  log: {
+    probing: "divining…"
+  },
   confirmMsg: {
     banishChain: (name) => "Banish chain '" + name + "'? This cannot be undone.",
     banishSigil: (name, n) => "Banish sigil '" + name + "'? It will be removed from " + n + " chain(s).",
