@@ -73,6 +73,10 @@ ICMP ping does not exist as a probe type and cannot. ICMP requires OS-level priv
 
 `ws-tcp` is the closest available TCP probe, but it succeeds only when the server replies quickly to a WebSocket upgrade attempt. Services that hold the connection open silently while waiting for a proprietary handshake will time out under `ws-tcp` even when `nc -z` confirms the port is open. Many home appliances, IoT devices, and MQTT brokers behave this way. Inside the browser sandbox there is no workaround.
 
+`ws-tcp` also reports `ok` for a *closed* port on a live host, because a TCP RST comes back just as fast as an accept and the browser surfaces both as the same error event. Read it as "this host is reachable", not "this port is open" — it reliably separates reachable from filtered, and nothing more. A host whose service has stopped will still show green if the machine answers. Where that distinction matters, probe a port you know the service owns.
+
+Both verdicts turn on a slow cutoff: an answer faster than the cutoff is `ok`, slower is treated as no response. That cutoff scales with the configured Probe Timeout (30% of it, floor 1500ms), so raising the timeout also widens what counts as a healthy-but-slow reply. The default 5000ms timeout gives the historical 1500ms cutoff. Raise it if you monitor over a VPN, a relayed tunnel, or anything cellular — a host answering in ~2s is otherwise reported dead.
+
 Opaque `https` tells you something answered. It does not tell you whether what answered is healthy. For "is this returning 200 and not 502," use `https-cors` on an endpoint that you can configure to allow your origin.
 
 ## Halt-on-fail
@@ -104,9 +108,21 @@ src/
     layout.js              autoGridPosition, computeGroupedLayout (pure math)
     render.js              buildCard, refreshCard, DOM helpers
     drag.js                drag-threshold + drop-target helpers
-    theme.js               active theme registry
+    theme.js               theme registry, BASE_LABELS, label lookup
     themes/grimorium.js    the grimoire look: labels, glyphs, decoration
+    themes/orrery.js       the default look
+    themes/cassette.js     industrial-control look
+    themes/lcars.js        Star Trek LCARS look; inlines its own typeface
 ```
+
+Two helpers at the repo root build a config from a real network instead of by hand:
+
+```
+grimorium-from-arp.py     UniFi gateway's live ARP table + DHCP leases -> config
+grimorium-merge-nmap.py   layer an nmap scan on top, one probe type per service
+```
+
+Neither handles credentials; both shell out to your own `ssh`. Their output describes your network, so keep it out of anywhere public.
 
 ## Development
 
@@ -126,12 +142,21 @@ Going forward: write a failing test before any feature or bug fix. The existing 
 
 ## Themes
 
-The grimoire look is the only theme that ships, but it is not load-bearing. The theme module (`src/js/theme.js`) registers the active theme, and the grimoire theme (`src/js/themes/grimorium.js`) provides:
+Four themes ship — `orrery` (the default), `grimorium`, `cassette`, and `lcars` — and none of them are load-bearing. The theme module (`src/js/theme.js`) registers the active theme; each theme module provides:
 
-- `labels.state`: display strings for the six semantic states
+- `labels`: display strings, keyed by dotted path (`state.ok`, `actions.scryAll`, `log.scanStart`)
 - `statusColorVar(state)`: CSS `var(--…)` token for a state
-- `glyphs`: pool of characters used for classifier sigils and background runes
-- `createDecoration(canvas, svgRoot)`: stateful instance that owns the canvas embers, the rotating sigil, and the rune scatter
+- `palette`: custom properties applied to `:root` on activation
+- `glyphs`: pool of characters used for classifier sigils and background decoration
+- `createDecoration(canvas, svgRoot)`: stateful instance owning the canvas and SVG background layers
 
-Component code uses the theme through these APIs and never references grimoire-specific names directly. A different theme would be a sibling module exporting the same shape with different values.
+Component code uses the theme through these APIs and never references one theme's names directly. A new theme is a sibling module exporting the same shape.
+
+### Labels
+
+A theme only has to define the labels it wants to change. Anything it omits falls back to `BASE_LABELS` in `src/js/theme.js`, which holds the neutral defaults for strings that would otherwise be hardcoded in `template.html` and `main.js` — the topbar counters, the confirm dialogs, field captions. Before this existed, those strings bypassed the theme system entirely, so every theme rendered the grimoire's vocabulary no matter what its own `labels` said.
+
+Static text is themed by marking elements `data-label="path.to.string"`; placeholders use `data-label-placeholder`, since they are an attribute rather than text content.
+
+The `lcars` theme inlines its typeface (Antonio, SIL OFL 1.1) as base64 in `styles.css` rather than linking it. A webfont URL would be a third-party fetch on every load, which contradicts the trust section above, and would not render offline or over `file://`.
 
