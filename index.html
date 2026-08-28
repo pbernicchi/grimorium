@@ -1447,6 +1447,222 @@
   body[data-theme="lcars"] .trust-body h3,
   body[data-theme="lcars"] .trust-body a { color: var(--gold); }
 
+  /* ---------- LCARS (Picard) theme overrides ---------- */
+  /* The 2399/Titan-A revision. Where the TNG block above fills blocks with
+     color and sets black text on them, this one inverts: dark panels, hairline
+     outlines, bright text, near-square corners (the source draws at rx:1), and
+     a faint backlit bloom standing in for the source's --glare + blur(8px).
+     Slate is chrome at rest; coral marks what is active. */
+  body[data-theme="titan"] {
+    background: var(--bg-0);
+    color: var(--ink);
+    font-family: var(--serif);
+    letter-spacing: 0.01em;
+  }
+  body[data-theme="titan"]::before { display: none; }
+
+  /* Top bar: a hairline coral rule, not a slab. */
+  body[data-theme="titan"] .topbar {
+    background: linear-gradient(180deg, #0a0c12 0%, var(--bg-0) 100%);
+    border-bottom: 1px solid var(--gold);
+  }
+  body[data-theme="titan"] .topbar .brand {
+    color: var(--gold);
+    font-family: var(--serif);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-shadow: 0 0 10px rgba(255, 103, 83, 0.45);
+  }
+  body[data-theme="titan"] .topbar .brand .sub {
+    color: var(--ink-dim);
+    font-style: normal;
+    letter-spacing: 0.06em;
+  }
+  body[data-theme="titan"] .topbar .meta .k { color: var(--ink-dim); }
+  body[data-theme="titan"] .topbar .meta .v { color: var(--vellum); }
+
+  /* Buttons: outlined, not filled. Hover fills — the source's convention for
+     an engaged control. Radius stays at the source's near-square 2px. */
+  body[data-theme="titan"] .btn {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    font-family: var(--serif);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    padding: 6px 16px;
+    min-height: 28px;
+    text-transform: uppercase;
+    transition: background 0.14s, color 0.14s, border-color 0.14s;
+  }
+  body[data-theme="titan"] .btn:hover {
+    background: var(--gold);
+    color: #05070b;
+    border-color: var(--gold);
+    box-shadow: none;
+  }
+  body[data-theme="titan"] .btn.primary { color: var(--verdant); border-color: var(--brown); }
+  body[data-theme="titan"] .btn.primary:hover { background: var(--verdant); color: #05070b; border-color: var(--verdant); box-shadow: none; }
+  body[data-theme="titan"] .btn.danger { color: var(--sienna); border-color: rgba(248, 75, 75, 0.4); }
+  body[data-theme="titan"] .btn.danger:hover { background: var(--sienna); color: #05070b; border-color: var(--sienna); box-shadow: none; }
+  body[data-theme="titan"] .btn.ghost { color: var(--ink); border-color: var(--ink-faint); }
+  body[data-theme="titan"] .btn.ghost:hover { background: var(--ink); color: #05070b; border-color: var(--ink); box-shadow: none; }
+  body[data-theme="titan"] .btn.active { background: var(--gold); color: #05070b; border-color: var(--gold); box-shadow: none; }
+  /* The source keeps inactive controls present at 30% rather than hiding
+     them (--dimLevel: .3). */
+  body[data-theme="titan"] .btn:disabled { opacity: 0.3; }
+
+  /* Left rail. */
+  body[data-theme="titan"] .shelf {
+    background: var(--bg-0);
+    border-right: 1px solid var(--gold-dim);
+  }
+  body[data-theme="titan"] .sigil {
+    background: var(--bg-2);
+    border: 1px solid var(--gold-dim);
+  }
+  body[data-theme="titan"] .sigil:hover { box-shadow: none; transform: scale(1.08); border-color: var(--gold); }
+  body[data-theme="titan"] .sigil.active { box-shadow: 0 0 0 1px currentColor inset; border-color: currentColor; }
+  body[data-theme="titan"] .sigil.drop-target { box-shadow: none; border-color: var(--gold); }
+  body[data-theme="titan"] .sigil-ghost { box-shadow: none; }
+  body[data-theme="titan"] .sigil.add { border-style: dashed; border-color: var(--ink-faint); }
+
+  /* Cards: dark instrument panels. State rides a hairline border plus a solid
+     edge-tab at the header's left — the Picard-era bar, which is a marker on
+     the edge rather than a fill across the whole header. */
+  body[data-theme="titan"] .card {
+    background: var(--bg-2);
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    box-shadow: none;
+  }
+  body[data-theme="titan"] .card::before,
+  body[data-theme="titan"] .card::after { display: none; }
+  body[data-theme="titan"] .card:hover { box-shadow: none; filter: brightness(1.18); }
+  body[data-theme="titan"] .card.dragging { box-shadow: none; filter: brightness(1.25); z-index: 30 !important; }
+  body[data-theme="titan"] .card.drop-target { box-shadow: 0 0 0 1px var(--gold); }
+
+  body[data-theme="titan"] .card-header {
+    background: rgba(47, 55, 73, 0.35);
+    border-bottom: 1px solid var(--ink-faint);
+    border-radius: 1px 1px 0 0;
+    padding: 4px 10px 5px;
+    gap: 8px;
+  }
+  /* Edge tab: a solid state-colored block on the bar's left. */
+  body[data-theme="titan"] .card-header::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 4px;
+    align-self: stretch;
+    background: var(--gold-dim);
+    border-radius: 1px;
+  }
+  body[data-theme="titan"] .card-name {
+    color: var(--vellum);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  body[data-theme="titan"] .card-pill {
+    background: transparent;
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    padding: 0 6px;
+  }
+  body[data-theme="titan"] .card.state-ok    .card-header::before { background: var(--verdant); }
+  body[data-theme="titan"] .card.state-warn  .card-header::before { background: var(--amber); }
+  body[data-theme="titan"] .card.state-bad   .card-header::before { background: var(--sienna); }
+  body[data-theme="titan"] .card.state-check .card-header::before { background: var(--gold-bright); }
+  body[data-theme="titan"] .card.state-unk   .card-header::before { background: var(--vellum-dim); }
+  body[data-theme="titan"] .card.state-ok    { border-color: rgba(103, 202, 240, 0.55); }
+  body[data-theme="titan"] .card.state-warn  { border-color: rgba(255, 151, 123, 0.55); }
+  body[data-theme="titan"] .card.state-bad   { border-color: rgba(248, 75, 75, 0.65); }
+  body[data-theme="titan"] .card.state-check { border-color: rgba(223, 225, 232, 0.5); animation: none; }
+  body[data-theme="titan"] .card.state-unk   { border-color: var(--gold-dim); }
+  body[data-theme="titan"] .card-addr { color: var(--ink-dim); }
+  body[data-theme="titan"] .card-detail { color: var(--sienna); border-top-color: var(--ink-faint); }
+  body[data-theme="titan"] .card-detail .name { color: var(--vellum); }
+
+  /* Status pips: square hairline markers. Fault blinks; holding sits at the
+     source's 30% dim rather than disappearing. */
+  body[data-theme="titan"] .link-dot {
+    border-radius: 1px;
+    box-shadow: none !important;
+  }
+  body[data-theme="titan"] .link-dot.bad { animation: titan-blink 1s ease-in-out infinite; }
+  body[data-theme="titan"] .link-dot.skipped { border-color: var(--slate); opacity: 0.3; }
+  @keyframes titan-blink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.3; }
+  }
+
+  /* Console, side panel, modal, tooltip. */
+  body[data-theme="titan"] .console {
+    background: var(--bg-1);
+    border-top: 1px solid var(--gold-dim);
+  }
+  body[data-theme="titan"] .console .header { color: var(--gold); letter-spacing: 0.1em; }
+  body[data-theme="titan"] .console .candle { background: var(--gold); box-shadow: none; border-radius: 1px; animation: titan-blink 1.6s ease-in-out infinite; }
+  body[data-theme="titan"] .console .tag-info { color: var(--moss); }
+
+  body[data-theme="titan"] .sidepanel {
+    background: var(--bg-1);
+    border-left: 1px solid var(--gold-dim);
+  }
+  body[data-theme="titan"] .sidepanel h3 { color: var(--gold); }
+  body[data-theme="titan"] .sidepanel .row .v { color: var(--vellum); }
+
+  body[data-theme="titan"] .modal {
+    background: var(--bg-1);
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    box-shadow: none;
+  }
+  body[data-theme="titan"] .modal::before,
+  body[data-theme="titan"] .modal::after { display: none; }
+  body[data-theme="titan"] .modal .head { border-bottom: 1px solid var(--ink-faint); }
+  body[data-theme="titan"] .modal .head h2 { color: var(--gold); letter-spacing: 0.06em; }
+  body[data-theme="titan"] .modal .foot { border-top: 1px solid var(--ink-faint); }
+  body[data-theme="titan"] .modal input,
+  body[data-theme="titan"] .modal select,
+  body[data-theme="titan"] .modal textarea {
+    background: var(--bg-2);
+    color: var(--vellum);
+    border: 1px solid var(--ink-faint);
+    border-radius: 2px;
+  }
+  body[data-theme="titan"] .modal input:focus,
+  body[data-theme="titan"] .modal select:focus,
+  body[data-theme="titan"] .modal textarea:focus {
+    border-color: var(--gold);
+    box-shadow: none;
+  }
+
+  body[data-theme="titan"] .group {
+    background: rgba(42, 113, 147, 0.05);
+    border-radius: 2px;
+    box-shadow: none;
+  }
+  body[data-theme="titan"] .group .label { text-shadow: none; letter-spacing: 0.1em; }
+  body[data-theme="titan"] .empty-hint h1 {
+    color: var(--gold);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-shadow: 0 0 14px rgba(255, 103, 83, 0.35);
+  }
+  body[data-theme="titan"] .tip {
+    background: var(--bg-1);
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    box-shadow: none;
+  }
+  body[data-theme="titan"] .tip .ttl { color: var(--gold); }
+  body[data-theme="titan"] .classifier-chip { border-radius: 2px; box-shadow: none; }
+  body[data-theme="titan"] .trust-body code { background: rgba(42, 113, 147, 0.18); }
+  body[data-theme="titan"] .trust-body h3,
+  body[data-theme="titan"] .trust-body a { color: var(--gold); }
+
 </style>
 </head>
 <body>
@@ -4010,12 +4226,381 @@
     }
   };
 
+  // src/js/themes/titan.js
+  var titan = {
+    id: "titan",
+    name: "LCARS (Picard)",
+    // 2399 Starfleet engineering nomenclature. Deliberately distinct from the
+    // TNG theme's vocabulary so the two themes do not read as the same skin.
+    labels: {
+      state: {
+        ok: "NOMINAL",
+        warn: "DEGRADED",
+        bad: "FAULT",
+        check: "TRACING",
+        skipped: "HOLDING",
+        unk: "NO SIGNAL"
+      },
+      brand: {
+        name: "LCARS",
+        sub: "// eps systems display",
+        pageTitle: "LCARS // eps systems display"
+      },
+      actions: {
+        scryAll: "\u25C6 TRACE ALL",
+        scryAllRunning: "\u25C6 TRACING\u2026",
+        inscribe: "SYSTEMS",
+        group: "SECTIONS",
+        reArrange: "ALIGN",
+        edit: "MODIFY",
+        banish: "DECOUPLE",
+        saveApply: "COMMIT",
+        save: "COMMIT",
+        cancel: "DISCARD",
+        close: "CLOSE",
+        bind: "ASSIGN",
+        addChain: "+ ADD SUBSYSTEM",
+        addLink: "+ ADD TRACE",
+        addSigil: "+ ADD SECTION",
+        rescry: "\u25C6 RETRACE",
+        reset: "RESTORE DEFAULTS",
+        purge: "CLEAR",
+        exportLabel: "EXPORT",
+        importLabel: "IMPORT",
+        apply: "COMMIT",
+        trust: "ACCESS"
+      },
+      nouns: {
+        chain: "subsystem",
+        chains: "subsystems",
+        link: "trace",
+        links: "traces",
+        sigil: "Section",
+        sigils: "Sections",
+        log: "SYSTEMS LOG",
+        addressLabel: "Address",
+        chainNameLabel: "Subsystem",
+        haltLabel: "Halt on Fault",
+        siteSettings: "Display Settings"
+      },
+      modalTitles: {
+        inscribe: "Systems Configuration",
+        inscribeChain: "Configure Subsystem",
+        transcribeOut: "Export Configuration",
+        transcribeIn: "Import Configuration",
+        transcribe: "Transfer",
+        sigilNew: "New Section",
+        sigilEdit: "Edit Section",
+        sigilDefault: "Section",
+        trust: "Access Authorization",
+        bindSigils: (name) => "ASSIGN SECTIONS // " + name
+      },
+      // Counters mirror the state labels exactly — a row reading NOMINAL is
+      // counted under NOMINAL.
+      meta: {
+        chains: "SUBSYSTEMS",
+        links: "TRACES",
+        up: "NOMINAL",
+        down: "FAULT",
+        last: "LAST TRACE"
+      },
+      fields: {
+        timeout: "Trace Timeout (ms)",
+        parallel: "Parallel Traces",
+        theme: "Display",
+        name: "Designation",
+        addressPlaceholder: "192.168.1.10 or example.com",
+        linkNamePlaceholder: "trace designation",
+        sigilNamePlaceholder: "engineering"
+      },
+      titles: {
+        addSigil: "Register a new section",
+        removeLink: "Remove trace"
+      },
+      confirmMsg: {
+        banishChain: (name) => "Decouple subsystem '" + name + "'? This cannot be undone.",
+        banishSigil: (name, n) => "Delete section '" + name + "'? It will be removed from " + n + " subsystem(s).",
+        reset: "Restore default configuration? Subsystem positions and sections are cleared."
+      },
+      empty: {
+        noSigils: "No sections registered. Create one from the rail, then return.",
+        noChainsHead: "no subsystems registered.",
+        pressHint: "press SYSTEMS to begin.",
+        noChainsForScry: "no subsystems with traces \u2014 configure some",
+        noLinksOnCard: "no traces",
+        noLinksInPanel: "No traces configured. Use SYSTEMS to add some."
+      },
+      explainers: {
+        chainDescription: "A subsystem is an ordered trace \u2014 DNS \u2192 ALB \u2192 Caddy \u2192 origin. When a trace faults, everything downstream holds, and the row reports which trace failed.",
+        backupNote: "Register hosts and the traces that monitor them."
+      },
+      log: {
+        probing: "tracing\u2026",
+        scanInFlight: "trace already running",
+        scanStart: (n) => "trace initiated // " + n + " subsystems",
+        scanEnd: (n) => "trace complete // " + n + " subsystems",
+        inscribed: (chains, links) => "config committed // " + chains + " subsystems, " + links + " traces",
+        chainInscribed: (name) => "subsystem configured // " + name,
+        chainBanished: (name) => "subsystem decoupled // " + name,
+        chainBound: (chain, sigil) => chain + " assigned to " + sigil,
+        sigilBound: (name) => "section created // " + name,
+        sigilUpdated: (name) => "section updated // " + name,
+        sigilBanished: (name) => "section deleted // " + name,
+        groupingOn: "grouping by section",
+        groupingOff: "free placement",
+        reflowed: "sections realigned",
+        arranged: "subsystems aligned to grid",
+        filterCleared: "filter cleared",
+        filterActive: (name) => "filter active // " + name,
+        transcribed: "config received // review and commit",
+        awakens: (date) => "LCARS online // " + date,
+        scryHint: "press TRACE ALL (or spacebar) to trace all subsystems",
+        dragHint: "drag subsystems by their header bar \u2014 drop on a section to assign",
+        sigilHint: "drag a section onto a subsystem to assign, click a section to filter",
+        groupHint: "toggle SECTIONS to group subsystems by their first section"
+      }
+    },
+    statusColorVar(state) {
+      switch (state) {
+        case "ok":
+          return "var(--verdant)";
+        case "warn":
+          return "var(--amber)";
+        case "bad":
+          return "var(--sienna)";
+        case "check":
+          return "var(--gold-bright)";
+        case "skipped":
+          return "var(--slate)";
+        default:
+          return "var(--vellum-dim)";
+      }
+    },
+    // Thin geometric markers. The Picard-era display leans on outlined shapes,
+    // diamonds and hairline rules where TNG used solid discs and blocks.
+    glyphs: [
+      "\u25C6",
+      "\u25C7",
+      "\u25C8",
+      "\u25A3",
+      "\u25A2",
+      "\u25A4",
+      "\u25A5",
+      "\u25A6",
+      "\u25A7",
+      "\u25A8",
+      "\u25A9",
+      "\u25E7",
+      "\u25E8",
+      "\u25E9",
+      "\u25EA",
+      "\u2B12",
+      "\u2B13",
+      "\u2B14",
+      "\u2B15",
+      "\u27E1",
+      "\u27D0",
+      "\u2317",
+      "\u22B9",
+      "\u22C4",
+      "\u2338",
+      "\u2339",
+      "\u233A",
+      "\u233B",
+      "\u233C",
+      "\u238A",
+      "\u2389",
+      "\u23E2",
+      "\u23E5",
+      "\u21F1",
+      "\u21F2",
+      "\u21F4",
+      "\u229A",
+      "\u229B",
+      "\u2263",
+      "\u22EE",
+      "\u22EF"
+    ],
+    // Mapped from the Titan display's own ramps. State escalates cool -> warm
+    // -> alert: cyanLighter (nominal), orangeLight (degraded), red-alert bright
+    // (fault). Every one clears 4.5:1 against the panel ground, measured:
+    // #67CAF0 10.5, #FF977B 9.3, #F84B4B 5.7, #DFE1E8 15.0, #9EA5BA 8.0.
+    //
+    // Structural chrome follows the source's logic rather than TNG's: slate at
+    // rest (--gold-dim), coral when active (--gold). That inversion is why this
+    // reads as Picard and not as a blue TNG.
+    palette: {
+      "--bg-0": "#05070b",
+      "--bg-1": "#05070b",
+      "--bg-2": "#0a0c12",
+      "--vellum": "#dfe1e8",
+      // grayLightest — brightest readout
+      "--vellum-dim": "#6d748c",
+      // grayLight (no signal)
+      "--ink": "#9ea5ba",
+      // grayLighter — body text
+      "--ink-dim": "#6d748c",
+      // grayLight
+      "--ink-faint": "#2f3749",
+      // grayDark
+      "--gold": "#ff6753",
+      // orange — active chrome
+      "--gold-dim": "#2f3749",
+      // grayDark — chrome at rest
+      "--gold-bright": "#dfe1e8",
+      // grayLightest (tracing / highlight)
+      "--amber": "#ff977b",
+      // orangeLight (degraded)
+      "--brown": "#2a7193",
+      // cyan — secondary chrome
+      "--brown-deep": "#1c3c55",
+      // cyanDark
+      "--moss": "#37a6d1",
+      // cyanLight
+      "--verdant": "#67caf0",
+      // cyanLighter (nominal)
+      "--verdant-bright": "#a8e2ff",
+      // cyan ramp extended one stop for hover
+      "--sienna": "#f84b4b",
+      // red alert bright (fault)
+      "--rust": "#e7442a",
+      // orangeDark
+      "--slate": "#9ea5ba",
+      // grayLighter (holding)
+      "--slate-dim": "#2f3749",
+      // grayDark
+      "--panel": "rgba(5, 7, 11, 0.94)",
+      "--panel-edge": "rgba(255, 103, 83, 0.5)",
+      "--serif": "'Antonio', 'Oswald', 'Roboto Condensed', 'Helvetica Neue', 'Arial Narrow', Arial, sans-serif"
+    },
+    /**
+     * Picard-era decoration: a still EPS schematic behind the panels. The canvas
+     * stays clear (no embers, no scanlines); the SVG layer draws the three
+     * motifs the source display is built from — a hairline graticule, stacked
+     * "alert bar" strips, and numeric conduit callouts. All deterministic and
+     * very low opacity, so it backs the cards without competing with them.
+     */
+    createDecoration(canvas, svgRoot) {
+      const ctx = canvas.getContext("2d", { alpha: true });
+      let dpr = Math.max(1, window.devicePixelRatio || 1);
+      function sizeCanvas() {
+        dpr = Math.max(1, window.devicePixelRatio || 1);
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        canvas.style.width = window.innerWidth + "px";
+        canvas.style.height = window.innerHeight + "px";
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      function spawnEmber() {
+      }
+      function maybeSpawnEmber() {
+      }
+      function tickScene() {
+      }
+      function drawCanvas() {
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      }
+      function readout(seed) {
+        const kind = hash32("k" + seed) % 4;
+        const a = hash32("a" + seed) % 90 + 10;
+        const b = hash32("b" + seed) % 9e3 + 1e3;
+        if (kind === 0) return "EPS " + a + "-" + b;
+        if (kind === 1) return "DECK " + (hash32("d" + seed) % 17 + 1);
+        if (kind === 2) return "JCT " + b;
+        return "NCC-80102";
+      }
+      function buildBackground() {
+        while (svgRoot.firstChild) svgRoot.removeChild(svgRoot.firstChild);
+        const w = window.innerWidth, h = window.innerHeight;
+        svgRoot.setAttribute("viewBox", `0 0 ${w} ${h}`);
+        svgRoot.setAttribute("width", w);
+        svgRoot.setAttribute("height", h);
+        const grid = svg("g");
+        const step = 120;
+        let n = 0;
+        for (let x = step; x < w; x += step, n++) {
+          grid.appendChild(svg("line", {
+            x1: x,
+            y1: 0,
+            x2: x,
+            y2: h,
+            stroke: "var(--brown-deep)",
+            "stroke-width": 1,
+            opacity: n % 4 === 0 ? 0.34 : 0.14
+          }));
+        }
+        n = 0;
+        for (let y = step; y < h; y += step, n++) {
+          grid.appendChild(svg("line", {
+            x1: 0,
+            y1: y,
+            x2: w,
+            y2: y,
+            stroke: "var(--brown-deep)",
+            "stroke-width": 1,
+            opacity: n % 4 === 0 ? 0.34 : 0.14
+          }));
+        }
+        svgRoot.appendChild(grid);
+        const bars = svg("g");
+        const cols = Math.max(2, Math.round(w / 460));
+        const rowsOfStacks = Math.max(1, Math.round(h / 420));
+        const stacks = cols * rowsOfStacks;
+        const cellW = w / cols, cellH = h / rowsOfStacks;
+        for (let s = 0; s < stacks; s++) {
+          const sx = hash32("bx" + s + "-" + w);
+          const sy = hash32("by" + s + "-" + h);
+          const x = Math.round(s % cols * cellW + 30 + sx % Math.max(1, cellW / 3));
+          const y = Math.round(Math.floor(s / cols) * cellH + 70 + sy % Math.max(1, cellH / 3));
+          const bw = 90 + sx % 70;
+          const rows = 5 + sy % 6;
+          for (let r = 0; r < rows; r++) {
+            bars.appendChild(svg("rect", {
+              x,
+              y: y + r * 9,
+              width: bw,
+              height: 5,
+              rx: 1,
+              ry: 1,
+              fill: "var(--slate-dim)",
+              stroke: "var(--brown-deep)",
+              "stroke-width": 1,
+              opacity: 0.5 - r * 0.03
+            }));
+          }
+        }
+        svgRoot.appendChild(bars);
+        const layer = svg("g");
+        const count = Math.round(w * h / 15e4);
+        for (let i = 0; i < count; i++) {
+          const seedX = hash32("tx" + i + "-" + w + "-" + h);
+          const seedY = hash32("ty" + i + "-" + w + "-" + h);
+          const x = 30 + seedX % Math.max(1, w - 170);
+          const y = 30 + seedY % Math.max(1, h - 60);
+          const tEl = svg("text", {
+            x,
+            y,
+            class: "bg-readout",
+            "font-size": 10 + seedY % 5,
+            opacity: 0.05 + seedY % 40 / 1400,
+            fill: seedX % 6 === 0 ? "var(--gold)" : "var(--moss)"
+          });
+          tEl.textContent = readout(i + "-" + w);
+          layer.appendChild(tEl);
+        }
+        svgRoot.appendChild(layer);
+      }
+      return { sizeCanvas, spawnEmber, drawCanvas, maybeSpawnEmber, buildBackground, tickScene };
+    }
+  };
+
   // src/js/theme.js
   var THEMES = Object.freeze({
     grimorium,
     cassette,
     orrery,
-    lcars
+    lcars,
+    titan
   });
   var activeTheme = orrery;
   function setActiveTheme(theme) {

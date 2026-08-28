@@ -11,6 +11,7 @@ import { grimorium } from "../src/js/themes/grimorium.js";
 import { cassette } from "../src/js/themes/cassette.js";
 import { orrery } from "../src/js/themes/orrery.js";
 import { lcars } from "../src/js/themes/lcars.js";
+import { titan } from "../src/js/themes/titan.js";
 import { buildCard } from "../src/js/render.js";
 import { makeChain, makeLink } from "./helpers/fixtures.js";
 
@@ -100,11 +101,12 @@ describe("setActiveTheme", () => {
 });
 
 describe("THEMES registry", () => {
-  it("exposes grimorium, cassette, orrery, and lcars", () => {
+  it("exposes grimorium, cassette, orrery, lcars, and titan", () => {
     expect(THEMES.grimorium).toBe(grimorium);
     expect(THEMES.cassette).toBe(cassette);
     expect(THEMES.orrery).toBe(orrery);
     expect(THEMES.lcars).toBe(lcars);
+    expect(THEMES.titan).toBe(titan);
   });
 
   it("themeById returns the requested theme", () => {
@@ -112,6 +114,7 @@ describe("THEMES registry", () => {
     expect(themeById("grimorium")).toBe(grimorium);
     expect(themeById("orrery")).toBe(orrery);
     expect(themeById("lcars")).toBe(lcars);
+    expect(themeById("titan")).toBe(titan);
   });
 
   it("themeById falls back to orrery (the default) for unknown ids", () => {
@@ -231,6 +234,77 @@ describe("LCARS theme shape", () => {
   });
 });
 
+
+describe("LCARS (Picard) theme shape", () => {
+  it("has full theme structure", () => {
+    expect(titan.id).toBe("titan");
+    expect(titan.name).toBeTruthy();
+    expect(titan.labels.state.ok).toBe("NOMINAL");
+    expect(titan.labels.state.bad).toBe("FAULT");
+    expect(titan.labels.state.skipped).toBe("HOLDING");
+    expect(titan.glyphs.length).toBeGreaterThan(20);
+    expect(typeof titan.statusColorVar).toBe("function");
+    expect(typeof titan.createDecoration).toBe("function");
+  });
+
+  it("provides a display label for every semantic state", () => {
+    for (const s of ["ok", "warn", "bad", "check", "skipped", "unk"]) {
+      expect(typeof titan.labels.state[s]).toBe("string");
+      expect(titan.labels.state[s].length).toBeGreaterThan(0);
+    }
+  });
+
+  it("provides every required palette entry", () => {
+    const required = ["--bg-0", "--bg-1", "--bg-2", "--gold", "--verdant", "--amber",
+                      "--sienna", "--ink", "--ink-dim", "--vellum", "--panel-edge"];
+    for (const key of required) {
+      expect(titan.palette[key]).toBeTruthy();
+    }
+  });
+
+  it("statusColorVar returns a var() expression for every state", () => {
+    for (const s of ["ok", "warn", "bad", "check", "skipped", "unk"]) {
+      expect(titan.statusColorVar(s)).toMatch(/^var\(--/);
+    }
+  });
+
+  it("is rectilinear: no radial layout, no circular cards", () => {
+    expect(titan.layoutMode).toBeUndefined();
+    expect(titan.cardShape).toBeUndefined();
+  });
+
+  it("carries the Titan display's own palette values", () => {
+    // Lifted from the source display's CSS custom properties. If these drift,
+    // the theme has stopped being derived from the reference and is just a
+    // blue-ish LCARS.
+    expect(titan.palette["--verdant"]).toBe("#67caf0");  // cyanLighter
+    expect(titan.palette["--amber"]).toBe("#ff977b");    // orangeLight
+    expect(titan.palette["--gold"]).toBe("#ff6753");     // orange
+    expect(titan.palette["--vellum"]).toBe("#dfe1e8");   // grayLightest
+    expect(titan.palette["--ink-faint"]).toBe("#2f3749"); // grayDark
+  });
+
+  it("inverts the TNG theme rather than recoloring it", () => {
+    // Chrome at rest is slate here and orange in the TNG theme; that
+    // inversion is the whole reason this is a separate theme.
+    expect(titan.palette["--gold-dim"]).not.toBe(lcars.palette["--gold-dim"]);
+    // No palette slot may be shared verbatim on the state colors.
+    for (const key of ["--verdant", "--amber", "--sienna", "--gold"]) {
+      expect(titan.palette[key], key).not.toBe(lcars.palette[key]);
+    }
+  });
+
+  it("uses its own vocabulary, not the TNG theme's", () => {
+    expect(titan.labels.nouns.chain).toBe("subsystem");
+    expect(titan.labels.nouns.link).toBe("trace");
+    expect(titan.labels.actions.scryAll).toMatch(/TRACE/);
+    // Every state label differs from the TNG theme's.
+    for (const s of ["ok", "warn", "bad", "check", "skipped", "unk"]) {
+      expect(titan.labels.state[s], s).not.toBe(lcars.labels.state[s]);
+    }
+  });
+});
+
 import { t, tFrom, applyLabels } from "../src/js/theme.js";
 
 describe("t / tFrom", () => {
@@ -273,7 +347,7 @@ describe("t / tFrom", () => {
     document.body.innerHTML = "";
   });
 
-  it("keeps the LCARS interface free of grimoire vocabulary", () => {
+  it("keeps both LCARS interfaces free of grimoire vocabulary", () => {
     const archaic = /grimoire|inscri|banish|sigil|scry|rite|vellum/i;
     const walk = (o, path = "") => {
       for (const [k, v] of Object.entries(o)) {
@@ -284,6 +358,7 @@ describe("t / tFrom", () => {
       }
     };
     walk(lcars.labels);
+    walk(titan.labels);
   });
 
   it("t() resolves against the active theme", () => {

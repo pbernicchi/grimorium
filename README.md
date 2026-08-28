@@ -112,7 +112,8 @@ src/
     themes/grimorium.js    the grimoire look: labels, glyphs, decoration
     themes/orrery.js       the default look
     themes/cassette.js     industrial-control look
-    themes/lcars.js        Star Trek LCARS look; inlines its own typeface
+    themes/lcars.js        TNG-era LCARS; inlines its own typeface
+    themes/titan.js        Picard-era LCARS, from the Titan-A systems display
 ```
 
 Two helpers at the repo root build a config from a real network instead of by hand:
@@ -142,7 +143,7 @@ Going forward: write a failing test before any feature or bug fix. The existing 
 
 ## Themes
 
-Four themes ship — `orrery` (the default), `grimorium`, `cassette`, and `lcars` — and none of them are load-bearing. The theme module (`src/js/theme.js`) registers the active theme; each theme module provides:
+Five themes ship — `orrery` (the default), `grimorium`, `cassette`, `lcars`, and `titan` — and none of them are load-bearing. The theme module (`src/js/theme.js`) registers the active theme; each theme module provides:
 
 - `labels`: display strings, keyed by dotted path (`state.ok`, `actions.scryAll`, `log.scanStart`)
 - `statusColorVar(state)`: CSS `var(--…)` token for a state
@@ -158,5 +159,28 @@ A theme only has to define the labels it wants to change. Anything it omits fall
 
 Static text is themed by marking elements `data-label="path.to.string"`; placeholders use `data-label-placeholder`, since they are an attribute rather than text content.
 
-The `lcars` theme inlines its typeface (Antonio, SIL OFL 1.1) as base64 in `styles.css` rather than linking it. A webfont URL would be a third-party fetch on every load, which contradicts the trust section above, and would not render offline or over `file://`.
+The `lcars` and `titan` themes share an inlined typeface (Antonio, SIL OFL 1.1), base64 in `styles.css` rather than linked. A webfont URL would be a third-party fetch on every load, which contradicts the trust section above, and would not render offline or over `file://`.
 
+### The two LCARS themes
+
+`lcars` and `titan` are both LCARS, but they are different revisions of it, not
+a skin and a recolor of that skin.
+
+`lcars` is the TNG-era look: warm pastels on flat black, solid filled color
+blocks with black text on them, fat asymmetric pill radii, wide letter-spacing,
+and no glow.
+
+`titan` is the Picard-era revision, derived from the Titan-A engineering
+display at `mewho.com/lab/titanEPS_1`. Its palette is lifted from that page's
+own CSS custom properties — three ramps (slate, cyan, coral) plus a red-alert
+set. The whole grammar inverts: dark instrument panels with hairline outlines
+and bright text, near-square corners (the source draws at `rx:1`), tight
+tracking, a faint backlit bloom, and inactive controls held at 30% opacity
+rather than hidden. Structure is slate at rest and coral when active, which is
+the opposite of TNG's orange-everywhere chrome and is most of why the two do
+not look alike.
+
+Neither maps state onto a traffic light. `lcars` runs anakiwa → sunflower →
+chestnut rose; `titan` runs cyan → coral → red alert. Both escalate cool to
+hot, both stay inside their era's palette, and every state color clears 4.5:1
+against its own ground.

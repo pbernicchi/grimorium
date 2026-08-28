@@ -1439,3 +1439,219 @@
   body[data-theme="lcars"] .trust-body code { background: rgba(255, 153, 51, 0.12); }
   body[data-theme="lcars"] .trust-body h3,
   body[data-theme="lcars"] .trust-body a { color: var(--gold); }
+
+  /* ---------- LCARS (Picard) theme overrides ---------- */
+  /* The 2399/Titan-A revision. Where the TNG block above fills blocks with
+     color and sets black text on them, this one inverts: dark panels, hairline
+     outlines, bright text, near-square corners (the source draws at rx:1), and
+     a faint backlit bloom standing in for the source's --glare + blur(8px).
+     Slate is chrome at rest; coral marks what is active. */
+  body[data-theme="titan"] {
+    background: var(--bg-0);
+    color: var(--ink);
+    font-family: var(--serif);
+    letter-spacing: 0.01em;
+  }
+  body[data-theme="titan"]::before { display: none; }
+
+  /* Top bar: a hairline coral rule, not a slab. */
+  body[data-theme="titan"] .topbar {
+    background: linear-gradient(180deg, #0a0c12 0%, var(--bg-0) 100%);
+    border-bottom: 1px solid var(--gold);
+  }
+  body[data-theme="titan"] .topbar .brand {
+    color: var(--gold);
+    font-family: var(--serif);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-shadow: 0 0 10px rgba(255, 103, 83, 0.45);
+  }
+  body[data-theme="titan"] .topbar .brand .sub {
+    color: var(--ink-dim);
+    font-style: normal;
+    letter-spacing: 0.06em;
+  }
+  body[data-theme="titan"] .topbar .meta .k { color: var(--ink-dim); }
+  body[data-theme="titan"] .topbar .meta .v { color: var(--vellum); }
+
+  /* Buttons: outlined, not filled. Hover fills — the source's convention for
+     an engaged control. Radius stays at the source's near-square 2px. */
+  body[data-theme="titan"] .btn {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    font-family: var(--serif);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    padding: 6px 16px;
+    min-height: 28px;
+    text-transform: uppercase;
+    transition: background 0.14s, color 0.14s, border-color 0.14s;
+  }
+  body[data-theme="titan"] .btn:hover {
+    background: var(--gold);
+    color: #05070b;
+    border-color: var(--gold);
+    box-shadow: none;
+  }
+  body[data-theme="titan"] .btn.primary { color: var(--verdant); border-color: var(--brown); }
+  body[data-theme="titan"] .btn.primary:hover { background: var(--verdant); color: #05070b; border-color: var(--verdant); box-shadow: none; }
+  body[data-theme="titan"] .btn.danger { color: var(--sienna); border-color: rgba(248, 75, 75, 0.4); }
+  body[data-theme="titan"] .btn.danger:hover { background: var(--sienna); color: #05070b; border-color: var(--sienna); box-shadow: none; }
+  body[data-theme="titan"] .btn.ghost { color: var(--ink); border-color: var(--ink-faint); }
+  body[data-theme="titan"] .btn.ghost:hover { background: var(--ink); color: #05070b; border-color: var(--ink); box-shadow: none; }
+  body[data-theme="titan"] .btn.active { background: var(--gold); color: #05070b; border-color: var(--gold); box-shadow: none; }
+  /* The source keeps inactive controls present at 30% rather than hiding
+     them (--dimLevel: .3). */
+  body[data-theme="titan"] .btn:disabled { opacity: 0.3; }
+
+  /* Left rail. */
+  body[data-theme="titan"] .shelf {
+    background: var(--bg-0);
+    border-right: 1px solid var(--gold-dim);
+  }
+  body[data-theme="titan"] .sigil {
+    background: var(--bg-2);
+    border: 1px solid var(--gold-dim);
+  }
+  body[data-theme="titan"] .sigil:hover { box-shadow: none; transform: scale(1.08); border-color: var(--gold); }
+  body[data-theme="titan"] .sigil.active { box-shadow: 0 0 0 1px currentColor inset; border-color: currentColor; }
+  body[data-theme="titan"] .sigil.drop-target { box-shadow: none; border-color: var(--gold); }
+  body[data-theme="titan"] .sigil-ghost { box-shadow: none; }
+  body[data-theme="titan"] .sigil.add { border-style: dashed; border-color: var(--ink-faint); }
+
+  /* Cards: dark instrument panels. State rides a hairline border plus a solid
+     edge-tab at the header's left — the Picard-era bar, which is a marker on
+     the edge rather than a fill across the whole header. */
+  body[data-theme="titan"] .card {
+    background: var(--bg-2);
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    box-shadow: none;
+  }
+  body[data-theme="titan"] .card::before,
+  body[data-theme="titan"] .card::after { display: none; }
+  body[data-theme="titan"] .card:hover { box-shadow: none; filter: brightness(1.18); }
+  body[data-theme="titan"] .card.dragging { box-shadow: none; filter: brightness(1.25); z-index: 30 !important; }
+  body[data-theme="titan"] .card.drop-target { box-shadow: 0 0 0 1px var(--gold); }
+
+  body[data-theme="titan"] .card-header {
+    background: rgba(47, 55, 73, 0.35);
+    border-bottom: 1px solid var(--ink-faint);
+    border-radius: 1px 1px 0 0;
+    padding: 4px 10px 5px;
+    gap: 8px;
+  }
+  /* Edge tab: a solid state-colored block on the bar's left. */
+  body[data-theme="titan"] .card-header::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 4px;
+    align-self: stretch;
+    background: var(--gold-dim);
+    border-radius: 1px;
+  }
+  body[data-theme="titan"] .card-name {
+    color: var(--vellum);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  body[data-theme="titan"] .card-pill {
+    background: transparent;
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    padding: 0 6px;
+  }
+  body[data-theme="titan"] .card.state-ok    .card-header::before { background: var(--verdant); }
+  body[data-theme="titan"] .card.state-warn  .card-header::before { background: var(--amber); }
+  body[data-theme="titan"] .card.state-bad   .card-header::before { background: var(--sienna); }
+  body[data-theme="titan"] .card.state-check .card-header::before { background: var(--gold-bright); }
+  body[data-theme="titan"] .card.state-unk   .card-header::before { background: var(--vellum-dim); }
+  body[data-theme="titan"] .card.state-ok    { border-color: rgba(103, 202, 240, 0.55); }
+  body[data-theme="titan"] .card.state-warn  { border-color: rgba(255, 151, 123, 0.55); }
+  body[data-theme="titan"] .card.state-bad   { border-color: rgba(248, 75, 75, 0.65); }
+  body[data-theme="titan"] .card.state-check { border-color: rgba(223, 225, 232, 0.5); animation: none; }
+  body[data-theme="titan"] .card.state-unk   { border-color: var(--gold-dim); }
+  body[data-theme="titan"] .card-addr { color: var(--ink-dim); }
+  body[data-theme="titan"] .card-detail { color: var(--sienna); border-top-color: var(--ink-faint); }
+  body[data-theme="titan"] .card-detail .name { color: var(--vellum); }
+
+  /* Status pips: square hairline markers. Fault blinks; holding sits at the
+     source's 30% dim rather than disappearing. */
+  body[data-theme="titan"] .link-dot {
+    border-radius: 1px;
+    box-shadow: none !important;
+  }
+  body[data-theme="titan"] .link-dot.bad { animation: titan-blink 1s ease-in-out infinite; }
+  body[data-theme="titan"] .link-dot.skipped { border-color: var(--slate); opacity: 0.3; }
+  @keyframes titan-blink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.3; }
+  }
+
+  /* Console, side panel, modal, tooltip. */
+  body[data-theme="titan"] .console {
+    background: var(--bg-1);
+    border-top: 1px solid var(--gold-dim);
+  }
+  body[data-theme="titan"] .console .header { color: var(--gold); letter-spacing: 0.1em; }
+  body[data-theme="titan"] .console .candle { background: var(--gold); box-shadow: none; border-radius: 1px; animation: titan-blink 1.6s ease-in-out infinite; }
+  body[data-theme="titan"] .console .tag-info { color: var(--moss); }
+
+  body[data-theme="titan"] .sidepanel {
+    background: var(--bg-1);
+    border-left: 1px solid var(--gold-dim);
+  }
+  body[data-theme="titan"] .sidepanel h3 { color: var(--gold); }
+  body[data-theme="titan"] .sidepanel .row .v { color: var(--vellum); }
+
+  body[data-theme="titan"] .modal {
+    background: var(--bg-1);
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    box-shadow: none;
+  }
+  body[data-theme="titan"] .modal::before,
+  body[data-theme="titan"] .modal::after { display: none; }
+  body[data-theme="titan"] .modal .head { border-bottom: 1px solid var(--ink-faint); }
+  body[data-theme="titan"] .modal .head h2 { color: var(--gold); letter-spacing: 0.06em; }
+  body[data-theme="titan"] .modal .foot { border-top: 1px solid var(--ink-faint); }
+  body[data-theme="titan"] .modal input,
+  body[data-theme="titan"] .modal select,
+  body[data-theme="titan"] .modal textarea {
+    background: var(--bg-2);
+    color: var(--vellum);
+    border: 1px solid var(--ink-faint);
+    border-radius: 2px;
+  }
+  body[data-theme="titan"] .modal input:focus,
+  body[data-theme="titan"] .modal select:focus,
+  body[data-theme="titan"] .modal textarea:focus {
+    border-color: var(--gold);
+    box-shadow: none;
+  }
+
+  body[data-theme="titan"] .group {
+    background: rgba(42, 113, 147, 0.05);
+    border-radius: 2px;
+    box-shadow: none;
+  }
+  body[data-theme="titan"] .group .label { text-shadow: none; letter-spacing: 0.1em; }
+  body[data-theme="titan"] .empty-hint h1 {
+    color: var(--gold);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-shadow: 0 0 14px rgba(255, 103, 83, 0.35);
+  }
+  body[data-theme="titan"] .tip {
+    background: var(--bg-1);
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    box-shadow: none;
+  }
+  body[data-theme="titan"] .tip .ttl { color: var(--gold); }
+  body[data-theme="titan"] .classifier-chip { border-radius: 2px; box-shadow: none; }
+  body[data-theme="titan"] .trust-body code { background: rgba(42, 113, 147, 0.18); }
+  body[data-theme="titan"] .trust-body h3,
+  body[data-theme="titan"] .trust-body a { color: var(--gold); }
